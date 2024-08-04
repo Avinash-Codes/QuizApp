@@ -1,4 +1,4 @@
-package com.example.quizapp
+package com.example.quizapp.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
@@ -6,14 +6,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val gradientColors = listOf(
-    Color(0xFFaa4b6b),
-    Color(0xFF6b6b83),
-    Color(0xFF33b8d99),
+    Color(0xFFaec8e1),
+    Color(0xFF91afd0),
+    Color(0xFF7298c4),
+    Color(0xFF5c7dbf),
 )
 
 val gradientColors2 = listOf(
-    Color(0xFFFFEFBA),
-    Color(0xFFFFFFFF),
+    Color(0xFFaec8e1),
+    Color(0xFF91afd0),
+    Color(0xFF7298c4),
+    Color(0xFF5c7dbf),
 )
 
 @Composable

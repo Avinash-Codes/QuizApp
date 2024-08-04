@@ -1,6 +1,7 @@
-package com.example.quizapp
+package com.example.quizapp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.example.quizapp.presentation.sign_in.SignInState
 import com.example.quizapp.presentation.sign_in.SignInResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
