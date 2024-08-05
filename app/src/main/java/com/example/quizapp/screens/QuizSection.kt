@@ -31,7 +31,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.quizapp.WindowSize
+import com.example.quizapp.WindowType
 import com.example.quizapp.models.QuizModel
+import com.example.quizapp.rememberWindowSize
 import com.example.quizapp.ui.theme.GradientBackground
 import com.example.quizapp.ui.theme.gradientColors2
 import com.google.firebase.database.FirebaseDatabase
@@ -75,20 +78,48 @@ fun QuizSectionUi(navController: NavController){
                 .shuffled()
                 .map { it.question }
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-                    .padding(top = 110.dp)
-            ) {
-                items(distinctCategories){ category ->
-                    QuizCard(category = category, navController = navController)
+            val windowSize = rememberWindowSize()
+            println("Window size is $windowSize")
+            when(windowSize.height){
+                WindowType.SMALL->{
+                    LazyColumn (
+                        modifier = Modifier.fillMaxSize()
+                            .padding(top = 70.dp)
+                    ){
+                        items(distinctCategories){ category ->
+                            SmallQuizCard(category = category, navController = navController)
+                        }
+                    }
+                }
+
+                WindowType.MEDIUM -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(top = 110.dp)
+                    ) {
+                        items(distinctCategories){ category ->
+                            MediumQuizCard(category = category, navController = navController)
+                        }
+                    }
+                }
+                WindowType.LARGE -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(top = 110.dp)
+                    ) {
+                        items(distinctCategories){ category ->
+                            LargeQuizCard(category = category, navController = navController)
+                        }
+                    }
                 }
             }
+
         }
     }
 }
 
 @Composable
-fun QuizCard(category: String, navController: NavController){
+fun MediumQuizCard(category: String, navController: NavController){
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -118,27 +149,140 @@ fun QuizCard(category: String, navController: NavController){
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTollBar(toolbarTitle: String){
+fun SmallQuizCard(category: String, navController: NavController){
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .size(100.dp),
-
-    ) {
-        TopAppBar(
-            title = {
-                Text(text = toolbarTitle, fontWeight = FontWeight.Bold, color = Color(0xffff9580))
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
+            .padding(10.dp)
+            .size(60.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFF101010))
+            .clickable {
+                navController.navigate("difficultySelection/$category")
+            }
+            .border(
+                width = 1.dp,
+                color = Color(0xffff9580),
+                shape = RoundedCornerShape(15.dp)
             ),
-            modifier = Modifier.fillMaxSize().border(
-                width = 0.5.dp,
-                color = Color.Black,
-                shape = RoundedCornerShape(0.dp)
+    ) {
+        Text(
+            text = category,
+            fontSize = 20.sp,
+            color = Color(0xffff9580),
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.CenterStart).padding(start = 20.dp),
         )
-        )
+
+
     }
+}
+
+
+@Composable
+fun LargeQuizCard(category: String, navController: NavController){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .size(99.dp)
+            .clip(RoundedCornerShape(15.dp))
+            .background(Color(0xFF101010))
+            .clickable {
+                navController.navigate("difficultySelection/$category")
+            }
+            .border(
+                width = 1.dp,
+                color = Color(0xffff9580),
+                shape = RoundedCornerShape(15.dp)
+            ),
+    ) {
+        Text(
+            text = category,
+            fontSize = 25.sp,
+            color = Color(0xffff9580),
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.CenterStart).padding(start = 20.dp),
+        )
+
+
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppTollBar(toolbarTitle: String){
+    val windowSize = rememberWindowSize()
+    when(windowSize.width){
+        WindowType.SMALL -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(100.dp),
+
+                ) {
+                TopAppBar(
+                    title = {
+                        Text(text = toolbarTitle, fontWeight = FontWeight.Bold, color = Color(0xffff9580))
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.fillMaxSize().border(
+                        width = 0.5.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(0.dp)
+                    )
+                )
+            }
+
+        }
+        WindowType.MEDIUM -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(100.dp),
+
+                ) {
+                TopAppBar(
+                    title = {
+                        Text(text = toolbarTitle, fontWeight = FontWeight.Bold, color = Color(0xffff9580))
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.fillMaxSize().border(
+                        width = 0.5.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(0.dp)
+                    )
+                )
+            }
+        }
+        WindowType.LARGE -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(100.dp),
+
+                ) {
+                TopAppBar(
+                    title = {
+                        Text(text = toolbarTitle, fontWeight = FontWeight.Bold, color = Color(0xffff9580), fontSize = 40.sp)
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
+                    modifier = Modifier.fillMaxSize().border(
+                        width = 0.5.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(0.dp)
+                    )
+                )
+            }
+        }
+    }
+
 }

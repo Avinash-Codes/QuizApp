@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.quizapp.WindowType
 import com.example.quizapp.models.QuizModel
+import com.example.quizapp.rememberWindowSize
 import com.example.quizapp.viewmodel.QuizViewModel
 import com.google.firebase.database.FirebaseDatabase
 
@@ -210,106 +213,631 @@ fun QuestionDisplay(
 
     val answerChecked = viewModel.answerCheckedStates[question] ?: false
 
+    val windowSize = rememberWindowSize()
+    println("questionSize: $windowSize")
+//    when(windowSize.height){
+//        WindowType.SMALL -> {
+//            Column(
+//                modifier = Modifier
+//                    .padding(top = 100.dp, start = 30.dp, end = 10.dp)
+//                    .clip(RoundedCornerShape(15.dp))
+//                    .size(300.dp, 490.dp)
+//                    .background(Color(0xffff9580)),
+//                verticalArrangement = Arrangement.Top,
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Box(
+//                    modifier = Modifier
+//                        .padding(top = 10.dp)
+//                        .clip(RoundedCornerShape(15.dp))
+//                        .size(250.dp, 200.dp)
+//                        .background(Color(0xFF171616))
+//                ) {
+//                    Text(
+//                        text = question.question,
+//                        modifier = Modifier
+//                            .padding(20.dp)
+//                            .align(Alignment.Center)
+//                            .wrapContentSize(),
+//                        fontSize = 20.sp,
+//                        fontFamily = FontFamily.SansSerif,
+//                        textAlign = TextAlign.Center,
+//                        color = Color(0xFFFFFFFF)
+//                    )
+//                }
+//
+//                Column(
+//                    modifier = Modifier
+//                        .padding(top = 25.dp, start = 10.dp, end = 10.dp)
+//                        .fillMaxWidth(),
+//                    verticalArrangement = Arrangement.spacedBy(10.dp)
+//                ) {
+//                    shuffledOptions.forEach { option ->
+//                        Button(
+//                            onClick = {
+//                                onOptionSelected(option)
+//                                viewModel.setAnswerChecked(question, true)
+//                            },
+//                            enabled = !answerChecked || selectedOption == option,
+//                            modifier = Modifier
+//                                .aspectRatio(8f),
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor =  when{
+//                                    selectedOption == option && answerChecked -> {
+//                                        if (option == question.correct_answer) Color.Green else Color.Red
+//                                    }
+//                                    else -> Color(0xFF171818)
+//                                },
+//                                contentColor = Color.White
+//                            ),
+//                            shape = RoundedCornerShape(17.dp)
+//                        ) {
+//                            Text(
+//                                text = option,
+//                                modifier = Modifier,
+//                                fontSize = 15.sp,
+//                                fontFamily = FontFamily.SansSerif,
+//                                textAlign = TextAlign.Center,
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(10.dp),
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                ) {
+//                    Button(onClick = {
+//                        onBackClick()
+//                    },
+//                        modifier = Modifier
+//                            .padding(10.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Color(0xFF171818),
+//                            contentColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(17.dp),
+//                    ) {
+//                        Text(text = "Back", fontSize = 20.sp, )
+//                    }
+//
+//                    Button(onClick = {
+//                        onNextClick()
+//                    },
+//                        modifier = Modifier
+//                            .padding(10.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Color(0xFF171818),
+//                            contentColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(17.dp)
+//                    ) {
+//                        Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 20.sp, )
+//                    }
+//                }
+//            }
+//        }
+//        WindowType.MEDIUM -> {
+//            Column(
+//                modifier = Modifier
+//                    .padding(top = 150.dp, start = 10.dp, end = 10.dp)
+//                    .clip(RoundedCornerShape(15.dp))
+//                    .size(500.dp, 790.dp)
+//                    .background(Color(0xffff9580)),
+//                verticalArrangement = Arrangement.Top,
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Box(
+//                    modifier = Modifier
+//                        .padding(top = 10.dp)
+//                        .clip(RoundedCornerShape(15.dp))
+//                        .size(400.dp, 250.dp)
+//                        .background(Color(0xFF171616))
+//                ) {
+//                    Text(
+//                        text = question.question,
+//                        modifier = Modifier
+//                            .padding(20.dp)
+//                            .align(Alignment.Center)
+//                            .wrapContentSize(),
+//                        fontSize = 30.sp,
+//                        fontFamily = FontFamily.SansSerif,
+//                        textAlign = TextAlign.Center,
+//                        color = Color(0xFFFFFFFF)
+//                    )
+//                }
+//
+//                Column(
+//                    modifier = Modifier
+//                        .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+//                        .fillMaxWidth(),
+//                    verticalArrangement = Arrangement.spacedBy(10.dp)
+//                ) {
+//                    shuffledOptions.forEach { option ->
+//                        Button(
+//                            onClick = {
+//                                onOptionSelected(option)
+//                                viewModel.setAnswerChecked(question, true)
+//                            },
+//                            enabled = !answerChecked || selectedOption == option,
+//                            modifier = Modifier
+//                                .aspectRatio(6f),
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor =  when{
+//                                    selectedOption == option && answerChecked -> {
+//                                        if (option == question.correct_answer) Color.Green else Color.Red
+//                                    }
+//                                    else -> Color(0xFF171818)
+//                                },
+//                                contentColor = Color.White
+//                            ),
+//                            shape = RoundedCornerShape(17.dp)
+//                        ) {
+//                            Text(
+//                                text = option,
+//                                modifier = Modifier,
+//                                fontSize = 20.sp,
+//                                fontFamily = FontFamily.SansSerif,
+//                                textAlign = TextAlign.Center,
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(10.dp),
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                ) {
+//                    Button(onClick = {
+//                        onBackClick()
+//                    },
+//                        modifier = Modifier
+//                            .padding(10.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Color(0xFF171818),
+//                            contentColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(17.dp),
+//                    ) {
+//                        Text(text = "Back", fontSize = 20.sp, )
+//                    }
+//
+//                    Button(onClick = {
+//                        onNextClick()
+//                    },
+//                        modifier = Modifier
+//                            .padding(10.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Color(0xFF171818),
+//                            contentColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(17.dp)
+//                    ) {
+//                        Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 20.sp, )
+//                    }
+//                }
+//            }
+//        }
+//        WindowType.LARGE -> {
+//            Column(
+//                modifier = Modifier
+//                    .padding(top = 150.dp, start = 45.dp, end = 10.dp)
+//                    .clip(RoundedCornerShape(15.dp))
+//                    .size(700.dp, 980.dp)
+//                    .background(Color(0xffff9580))
+//                ,
+//                verticalArrangement = Arrangement.Top,
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Box(
+//                    modifier = Modifier
+//                        .padding(top = 30.dp)
+//                        .clip(RoundedCornerShape(17.dp))
+//                        .size(500.dp, 350.dp)
+//                        .background(Color(0xFF171616))
+//                ) {
+//                    Text(
+//                        text = question.question,
+//                        modifier = Modifier
+//                            .padding(20.dp)
+//                            .align(Alignment.Center)
+//                            .wrapContentSize(),
+//                        fontSize = 30.sp,
+//                        fontFamily = FontFamily.SansSerif,
+//                        textAlign = TextAlign.Center,
+//                        color = Color(0xFFFFFFFF)
+//                    )
+//                }
+//
+//                Column(
+//                    modifier = Modifier
+//                        .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+//                        .fillMaxWidth(),
+//                    verticalArrangement = Arrangement.spacedBy(10.dp)
+//                ) {
+//                    shuffledOptions.forEach { option ->
+//                        Button(
+//                            onClick = {
+//                                onOptionSelected(option)
+//                                viewModel.setAnswerChecked(question, true)
+//                            },
+//                            enabled = !answerChecked || selectedOption == option,
+//                            modifier = Modifier
+//                                .aspectRatio(7f),
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor =  when{
+//                                    selectedOption == option && answerChecked -> {
+//                                        if (option == question.correct_answer) Color.Green else Color.Red
+//                                    }
+//                                    else -> Color(0xFF171818)
+//                                },
+//                                contentColor = Color.White
+//                            ),
+//                            shape = RoundedCornerShape(17.dp)
+//                        ) {
+//                            Text(
+//                                text = option,
+//                                modifier = Modifier,
+//                                fontSize = 30.sp,
+//                                fontFamily = FontFamily.SansSerif,
+//                                textAlign = TextAlign.Center,
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(10.dp),
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                ) {
+//                    Button(onClick = {
+//                        onBackClick()
+//                    },
+//                        modifier = Modifier
+//                            .padding(10.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Color(0xFF171818),
+//                            contentColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(17.dp),
+//                    ) {
+//                        Text(text = "Back", fontSize = 50.sp, )
+//                    }
+//
+//                    Button(onClick = {
+//                        onNextClick()
+//                    },
+//                        modifier = Modifier
+//                            .padding(10.dp),
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Color(0xFF171818),
+//                            contentColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(17.dp)
+//                    ) {
+//                        Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 50.sp, )
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-
-    Column(
-        modifier = Modifier
-            .padding(top = 150.dp, start = 10.dp, end = 10.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .size(500.dp, 790.dp)
-            .background(Color(0xffff9580)),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .size(400.dp, 250.dp)
-                .background(Color(0xFF171616))
-        ) {
-            Text(
-                text = question.question,
+    when(windowSize.width){
+        WindowType.SMALL -> {
+            Column(
                 modifier = Modifier
-                    .padding(20.dp)
-                    .align(Alignment.Center)
-                    .wrapContentSize(),
-                fontSize = 30.sp,
-                fontFamily = FontFamily.SansSerif,
-                textAlign = TextAlign.Center,
-                color = Color(0xFFFFFFFF)
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(top = 40.dp, start = 10.dp, end = 10.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            shuffledOptions.forEach { option ->
-                Button(
-                    onClick = {
-                        onOptionSelected(option)
-                        viewModel.setAnswerChecked(question, true)
-                    },
-                    enabled = !answerChecked || selectedOption == option,
+                    .padding(top = 100.dp, start = 30.dp, end = 10.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .size(300.dp, 490.dp)
+                    .background(Color(0xffff9580)),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
                     modifier = Modifier
-                        .aspectRatio(6f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =  when{
-                            selectedOption == option && answerChecked -> {
-                            if (option == question.correct_answer) Color.Green else Color.Red
-                        }
-                    else -> Color(0xFF171818)
-            },
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(17.dp)
+                        .padding(top = 10.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .size(250.dp, 200.dp)
+                        .background(Color(0xFF171616))
                 ) {
                     Text(
-                        text = option,
-                        modifier = Modifier,
+                        text = question.question,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .align(Alignment.Center)
+                            .wrapContentSize(),
                         fontSize = 20.sp,
                         fontFamily = FontFamily.SansSerif,
                         textAlign = TextAlign.Center,
+                        color = Color(0xFFFFFFFF)
                     )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 25.dp, start = 10.dp, end = 10.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    shuffledOptions.forEach { option ->
+                        Button(
+                            onClick = {
+                                onOptionSelected(option)
+                                viewModel.setAnswerChecked(question, true)
+                            },
+                            enabled = !answerChecked || selectedOption == option,
+                            modifier = Modifier
+                                .aspectRatio(8f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor =  when{
+                                    selectedOption == option && answerChecked -> {
+                                        if (option == question.correct_answer) Color.Green else Color.Red
+                                    }
+                                    else -> Color(0xFF171818)
+                                },
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(17.dp)
+                        ) {
+                            Text(
+                                text = option,
+                                modifier = Modifier,
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(onClick = {
+                        onBackClick()
+                    },
+                        modifier = Modifier
+                            .padding(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171818),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(17.dp),
+                    ) {
+                        Text(text = "Back", fontSize = 20.sp, )
+                    }
+
+                    Button(onClick = {
+                        onNextClick()
+                    },
+                        modifier = Modifier
+                            .padding(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171818),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(17.dp)
+                    ) {
+                        Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 20.sp, )
+                    }
+                }
+            }
+        }
+        WindowType.MEDIUM -> {
+            Column(
+                modifier = Modifier
+                    .padding(top = 120.dp, start = 25.dp, end = 20.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .size(700.dp, 780.dp)
+                    .background(Color(0xffff9580))
+                ,
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 30.dp)
+                        .clip(RoundedCornerShape(17.dp))
+                        .size(350.dp, 300.dp)
+                        .background(Color(0xFF171616))
+                ) {
+                    Text(
+                        text = question.question,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .align(Alignment.Center)
+                            .wrapContentSize(),
+                        fontSize = 30.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFFFFFFF)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 40.dp, start = 10.dp, end = 10.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    shuffledOptions.forEach { option ->
+                        Button(
+                            onClick = {
+                                onOptionSelected(option)
+                                viewModel.setAnswerChecked(question, true)
+                            },
+                            enabled = !answerChecked || selectedOption == option,
+                            modifier = Modifier
+                                .aspectRatio(6f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor =  when{
+                                    selectedOption == option && answerChecked -> {
+                                        if (option == question.correct_answer) Color.Green else Color.Red
+                                    }
+                                    else -> Color(0xFF171818)
+                                },
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(17.dp)
+                        ) {
+                            Text(
+                                text = option,
+                                modifier = Modifier,
+                                fontSize = 30.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(onClick = {
+                        onBackClick()
+                    },
+                        modifier = Modifier
+                            .padding(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171818),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(17.dp),
+                    ) {
+                        Text(text = "Back", fontSize = 30.sp, )
+                    }
+
+                    Button(onClick = {
+                        onNextClick()
+                    },
+                        modifier = Modifier
+                            .padding(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171818),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(17.dp)
+                    ) {
+                        Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 30.sp, )
+                    }
                 }
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(onClick = {
-                onBackClick()
-            },
+        WindowType.LARGE -> {
+            Column(
                 modifier = Modifier
-                    .padding(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF171818),
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(17.dp),
+                    .padding(top = 100.dp, start = 280.dp, end = 10.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .size(320.dp, 320.dp)
+                    .background(Color(0xffff9580))
+                ,
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Back", fontSize = 20.sp, )
-            }
+                Box(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .clip(RoundedCornerShape(17.dp))
+                        .size(270.dp, 120.dp)
+                        .background(Color(0xFF171616))
+                ) {
+                    Text(
+                        text = question.question,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .align(Alignment.Center)
+                            .wrapContentSize(),
+                        fontSize = 13.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFFFFFFF)
+                    )
+                }
 
-            Button(onClick = {
-                onNextClick()
-            },
-                modifier = Modifier
-                    .padding(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF171818),
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(17.dp)
-            ) {
-                Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 20.sp, )
+                Column(
+                    modifier = Modifier
+                        .padding(top = 5.dp, start = 10.dp, end = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    shuffledOptions.forEach { option ->
+                        Button(
+                            onClick = {
+                                onOptionSelected(option)
+                                viewModel.setAnswerChecked(question, true)
+                            },
+                            enabled = !answerChecked || selectedOption == option,
+                            modifier = Modifier
+                                .aspectRatio(11f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor =  when{
+                                    selectedOption == option && answerChecked -> {
+                                        if (option == question.correct_answer) Color.Green else Color.Red
+                                    }
+                                    else -> Color(0xFF171818)
+                                },
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(17.dp)
+                        ) {
+                            Text(
+                                text = option,
+                                modifier = Modifier,
+                                fontSize = 8.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(onClick = {
+                        onBackClick()
+                    },
+                        modifier = Modifier
+                            .padding(0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171818),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(17.dp),
+                    ) {
+                        Text(text = "Back", fontSize = 8.sp, )
+                    }
+
+                    Button(onClick = {
+                        onNextClick()
+                    },
+                        modifier = Modifier
+                            .padding(0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF171818),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(17.dp)
+                    ) {
+                        Text(text = if(isLastQuestion) "Submit" else "Next", fontSize = 8.sp, )
+                    }
+                }
             }
         }
     }
