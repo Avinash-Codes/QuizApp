@@ -35,17 +35,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7" // Ensure this is compatible
+        kotlinCompilerExtensionVersion = "2.0.0" // Updated to match Kotlin 2.0.0
     }
     packaging {
         resources {
@@ -55,14 +55,14 @@ android {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(8)) // Ensure Java version is correct
+            languageVersion.set(JavaLanguageVersion.of(17)) // Updated to Java 17
         }
     }
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(platform(libs.androidx.compose.bom)) // BOM included here
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -77,7 +77,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom)) // BOM included here
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
@@ -100,5 +100,4 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation("androidx.activity:activity-ktx:1.9.1")
-
 }
